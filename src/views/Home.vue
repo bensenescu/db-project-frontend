@@ -1,33 +1,31 @@
 <template>
-  <b-list-group>
-    <b-list-group-item v-for="section in sections" :key="section.sectionId">
-      <p>{{section.sectionId}}</p>
-      <p>{{section.courseId}}</p>
-      <p>{{section.meetingtimes}}</p>
-      <p v-if="section.finalDate">{{section.finalDate}}</p>
-      <p>{{section.blackboardUrl}}</p>
-    </b-list-group-item>
-  </b-list-group>
+  <div>
+    <login-form
+      v-if="state == 'login'"
+      v-on:switchToSignUp="state = 'sign-up'"
+      v-on:userSignIn="$emit('userSignIn', $event)" />
+    <sign-up-form
+      v-else
+      v-on:switchToLogin="state = 'login'"
+      v-on:userCreated="$emit('userSignIn', $event)" />
+  </div>
 </template>
 
 <script>
-import api from '../services/api';
+// import api from '../services/api';
+import LoginForm from '../components/LoginForm.vue';
+import SignUpForm from '../components/SignUpForm.vue';
 
 export default {
   name: 'home',
+  components: {
+    LoginForm,
+    SignUpForm,
+  },
   data() {
     return {
-      sections: [],
+      state: 'login', // state is either login or sign-up
     };
-  },
-  async created() {
-    this.sections = await this.getSections();
-  },
-  methods: {
-    getSections: async () => {
-      const { data } = await api.getSections();
-      return data.results;
-    },
   },
 };
 </script>
