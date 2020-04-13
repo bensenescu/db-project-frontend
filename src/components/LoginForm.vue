@@ -10,6 +10,7 @@
           required
           placeholder="Email" />
       </b-form-group>
+      <b-form-checkbox v-model="isProfessor">Are you a professor?</b-form-checkbox>
       <b-button type="submit" variant="primary">Log in</b-button>
     </b-form>
     <b-card-body>
@@ -30,21 +31,27 @@ export default {
     return {
       email: '',
       error: '',
+      isProfessor: '',
     };
   },
   methods: {
     async onSubmit(evt) {
       evt.preventDefault();
       try {
-        const res = await api.getUser(this.email);
-        if (res.error) {
+        let res;
+        if (this.isProfessor) {
+          res = await api.getProfessor(this.email);
+        } else {
+          res = await api.getStudent(this.email);
+        }
+        if (res.error || !res) {
           this.error = res.error;
           // eslint-disable-next-line no-alert
-          alert(`ERROR: Please sign up if you haven't created an account before.\n
-            Sql Error: ${res.error.sqlMessage}`);
+          alert(`ERROR: Please sign up if you haven't created an account before.
+            ${res.error ? `\nSql Error: ${res.error.sqlMessage}` : ''}`);
         } else {
           this.$emit('userSignIn', res);
-          this.$router.push('/sections');
+          this.$router.push('/');
         }
         this.section = {};
       } catch (err) {

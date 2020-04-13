@@ -14,7 +14,7 @@
 import api from '../services/api';
 
 export default {
-  name: 'home',
+  name: 'sections',
   data() {
     return {
       sections: [],

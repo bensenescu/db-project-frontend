@@ -17,7 +17,15 @@
           required
           placeholder="Full Name" />
       </b-form-group>
-      <b-form-group label-for="phone">
+      <b-form-group v-if="isProfessor" label-for="college">
+        <b-form-input
+          id="college"
+          v-model="user.professorCollege"
+          type="text"
+          required
+          placeholder="Professor College"/>
+      </b-form-group>
+      <b-form-group v-if="isProfessor" label-for="phone">
         <b-form-input
           id="phone"
           v-model="user.phone"
@@ -25,6 +33,15 @@
           required
           placeholder="Phone Number"/>
       </b-form-group>
+      <b-form-group v-else label-for="major">
+        <b-form-input
+          id="major"
+          v-model="user.studentMajor"
+          type="text"
+          required
+          placeholder="Major"/>
+      </b-form-group>
+      <b-form-checkbox v-model="isProfessor">Are you a professor?</b-form-checkbox>
       <b-button type="submit" variant="primary">Create Account</b-button>
     </b-form>
     <b-card-body>
@@ -44,22 +61,30 @@ export default {
   data() {
     return {
       user: {},
+      isProfessor: false,
       error: '',
     };
+  },
+  watch: {
+    isProfessor() {
+      this.user = {};
+    },
   },
   methods: {
     async onSubmit(evt) {
       evt.preventDefault();
 
       try {
-        const res = await api.createUser(this.user);
+        const res = this.isProfessor ? await api.createProfessor(this.user)
+          : await api.createStudent(this.user);
+
         if (res.error) {
           this.error = res.error;
           // eslint-disable-next-line no-alert
           alert(`ERROR: ${res.error.sqlMessage}`);
         } else {
           this.$emit('userCreated', this.user);
-          this.$router.push('/sections');
+          this.$router.push('/');
         }
       } catch (err) {
         this.error = err;

@@ -21,19 +21,36 @@ async function createSection(section) {
   }
 }
 
-async function createUser(user) {
+async function createStudent(user) {
   try {
-    const { data } = await axios.post(`${url}/calendar/users`, user);
+    const { data } = await axios.post(`${url}/calendar/students`, user);
     return data;
   } catch (err) {
     return err;
   }
 }
 
-async function getUser(email) {
+async function getStudent(email) {
   try {
-    console.log(email);
-    const { data } = await axios.get(`${url}/calendar/users/${email}`);
+    const { data } = await axios.get(`${url}/calendar/students/${email}`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function createProfessor(user) {
+  try {
+    const { data } = await axios.post(`${url}/calendar/professors`, user);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getProfessor(email) {
+  try {
+    const { data } = await axios.get(`${url}/calendar/professors/${email}`);
     return data;
   } catch (err) {
     return err;
@@ -43,6 +60,8 @@ async function getUser(email) {
 export default {
   getSections,
   createSection,
-  createUser,
-  getUser,
+  createStudent,
+  getStudent,
+  createProfessor,
+  getProfessor,
 };

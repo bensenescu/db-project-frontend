@@ -1,31 +1,33 @@
 <template>
   <div>
-    <login-form
-      v-if="state == 'login'"
-      v-on:switchToSignUp="state = 'sign-up'"
-      v-on:userSignIn="$emit('userSignIn', $event)" />
-    <sign-up-form
-      v-else
-      v-on:switchToLogin="state = 'login'"
-      v-on:userCreated="$emit('userSignIn', $event)" />
+    <sections :user="user" />
   </div>
 </template>
 
 <script>
 // import api from '../services/api';
-import LoginForm from '../components/LoginForm.vue';
-import SignUpForm from '../components/SignUpForm.vue';
+import Sections from '../components/Sections.vue';
 
 export default {
   name: 'home',
   components: {
-    LoginForm,
-    SignUpForm,
+    Sections,
   },
-  data() {
-    return {
-      state: 'login', // state is either login or sign-up
-    };
+  props: {
+    user: {
+      type: Object,
+      required: true,
+    },
+  },
+  watch: {
+    user: {
+      immediate: true,
+      handler() {
+        if (!this.user.email) {
+          this.$router.push('/auth');
+        }
+      },
+    },
   },
 };
 </script>
