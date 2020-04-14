@@ -148,6 +148,68 @@ async function updateLabel(label) {
   }
 }
 
+async function createTodo(todo, user) {
+  try {
+    const item = todo;
+    item.studentId = user.studentId;
+    const { data } = await axios.post(`${url}/calendar/todo`, item);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getTodos() {
+  try {
+    const { data } = await axios.get(`${url}/calendar/todo`);
+
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function deleteTodo(todo) {
+  try {
+    const { data } = await axios.delete(`${url}/calendar/todo/${todo.itemId}`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function updateTodo(todo, user) {
+  try {
+    const item = todo;
+    item.studentId = user.studentId;
+    const { data } = await axios.put(`${url}/calendar/todo`, item);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getStudentTodos(student) {
+  try {
+    const { data } = await axios.get(`${url}/calendar/students/todoItems/${student.studentId}`);
+
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+
+async function enrollInSection(section, user) {
+  try {
+    const param = { section, user };
+    const { data } = await axios.post(`${url}/calendar/students/enroll`, param);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
 export default {
   getSections,
   createSection,
@@ -165,4 +227,10 @@ export default {
   getLabels,
   updateLabel,
   deleteLabel,
+  getTodos,
+  deleteTodo,
+  createTodo,
+  updateTodo,
+  getStudentTodos,
+  enrollInSection,
 };

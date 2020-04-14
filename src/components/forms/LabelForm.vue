@@ -1,33 +1,20 @@
 <template>
-  <b-card class="container" header="Add a Calendar Item:">
+  <b-card class="container" header="Add a label:">
     <b-form v-on:submit="onSubmit" v-on:reset="onReset" v-if="show">
-      <b-form-group label-for="name" description="Ex. Homework 7">
+      <b-form-group label-for="name" description="Ex. Send an Email">
         <b-form-input
           id="name"
-          v-model="item.name"
+          v-model="label.labelName"
           type="text"
           required
           placeholder="Enter Item Name *" />
       </b-form-group>
-      <b-form-group label-for="description">
+      <b-form-group label-for="task" description="Ex. blue or yellow">
         <b-form-input
-          id="description"
-          v-model="item.description"
+          id="task"
+          v-model="label.labelColor"
           type="text"
-          placeholder="Enter Item Description" />
-      </b-form-group>
-      <b-form-group label-for="item-type">
-        <b-form-select
-          id="item-type"
-          v-model="item.type"
-          :options="itemOptions"/>
-      </b-form-group>
-      <b-form-group label-for="assignment-url" description="Optional: Link to the assignment">
-        <b-form-input
-          id="assigment-url"
-          v-model="item.assignmentUrl"
-          type="url"
-          placeholder="Assignment Url" />
+          placeholder="Color" />
       </b-form-group>
       <b-button type="submit" variant="primary">Submit</b-button>
       <b-button type="reset" variant="danger">Reset</b-button>
@@ -36,40 +23,65 @@
 </template>
 
 <script>
-import api from '../services/api';
+import api from '../../services/api';
 
 export default {
-  name: 'item-form',
+  name: 'label-form',
+  props: {
+    labelProp: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
   data() {
     return {
-      item: {},
-      itemOptions: ['Homework', 'Quiz', 'Exam', 'Reading', 'Project', 'Other'],
+      label: {},
       show: true,
       error: '',
     };
+  },
+  watch: {
+    labelProp: {
+      immediate: true,
+      handler() {
+        this.label = { ...this.labelProp };
+      },
+    },
+  },
+  computed: {
+    editing() {
+      return !!this.labelProp.labelId;
+    },
   },
   methods: {
     async onSubmit(evt) {
       evt.preventDefault();
 
       try {
-        const res = await api.createCourse(this.course);
+        const res = this.editing ? await api.updateLabel(this.label)
+          : await api.createLabel(this.label);
+
         if (res.error) {
           this.error = res.error;
           // eslint-disable-next-line no-alert
           alert(`ERROR: ${res.error.sqlMessage}`);
         } else {
           // eslint-disable-next-line no-alert
-          alert('Your item has successfully been created!');
+          alert(`Your label has successfully been ${this.editing ? 'edited' : 'created'}!`);
         }
-        this.course = {};
+        this.label = {};
       } catch (err) {
         this.error = err;
       }
+
+      this.$emit('updated');
+      this.section = {};
     },
     onReset(evt) {
       evt.preventDefault();
-      this.course = {};
+      this.label = {};
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {

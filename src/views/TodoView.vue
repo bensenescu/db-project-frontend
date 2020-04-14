@@ -1,20 +1,21 @@
 <template>
   <div>
-    <label-form :user="user" v-on:updated="setLabels()"/>
+    <todo-form :user="user" v-on:updated="setTodos()"/>
     <br>
-    <h1>Current Labels</h1>
+    <h1>Current Todos</h1>
     <list
       :user="user"
-      :list="labels"
-      :deleteItem="deleteLabel"
+      :list="todos"
+      :deleteItem="deleteTodo"
       :editState="editing"
       v-on:edit="changeEditState">
       <template v-slot:fields="slotProps">
-        <p>Name: {{slotProps.item.labelName}}</p>
-        <p>Color: {{slotProps.item.labelColor}}</p>
+        <p>Name: {{slotProps.item.itemName}}</p>
+        <p>Task: {{slotProps.item.task}}</p>
+        <p>Label: {{slotProps.item.label}}</p>
       </template>
       <template v-slot:form="slotProps">
-        <label-form v-on:updated="setLabels()" :labelProp="slotProps.item" />
+        <todo-form v-on:updated="setTodos()" :user="user" :todoProp="slotProps.item" />
       </template>
     </list>
   </div>
@@ -22,13 +23,13 @@
 
 <script>
 import api from '../services/api';
-import LabelForm from '../components/forms/LabelForm.vue';
+import TodoForm from '../components/forms/TodoForm.vue';
 import List from '../components/helper/list.vue';
 
 export default {
-  name: 'label-view',
+  name: 'todo-view',
   components: {
-    LabelForm,
+    TodoForm,
     List,
   },
   props: {
@@ -39,34 +40,35 @@ export default {
   },
   data() {
     return {
-      labels: [],
+      todos: [],
       editing: [],
     };
   },
   watch: {
-    labels() {
+    todos() {
       this.setEditState();
     },
   },
   async created() {
-    this.setLabels();
+    this.setTodos();
     this.setEditState();
   },
   methods: {
-    async setLabels() {
-      this.labels = await api.getLabels();
+    async setTodos() {
+      this.todos = await api.getStudentTodos(this.user);
       this.setEditState();
     },
-    async deleteLabel(label) {
+    async deleteTodo(todo) {
+      console.log('delete');
       try {
-        await api.deleteLabel(label);
+        await api.deleteTodo(todo);
       } catch (err) {
         this.error = err;
       }
-      this.setLabels();
+      this.setTodos();
     },
     setEditState() {
-      this.editing = [...this.labels.map(() => false)];
+      this.editing = [...this.todos.map(() => false)];
     },
     changeEditState(index) {
       this.editing[index] = true;

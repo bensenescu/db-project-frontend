@@ -19,7 +19,7 @@
 
 <script>
 import api from '../services/api';
-import SectionForm from './SectionForm.vue';
+import SectionForm from './forms/SectionForm.vue';
 
 export default {
   name: 'section-ours',

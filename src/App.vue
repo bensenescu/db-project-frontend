@@ -1,6 +1,6 @@
 <template>
   <div>
-    <the-nav v-if="user.email" :isProfessor="user.professorId ? true : false" />
+    <the-nav v-if="user.email" :isProfessor="user.professorCollege ? true : false" />
     <router-view v-on:userSignIn="setUser($event)" class="main-content" :user="user"/>
   </div>
 </template>
@@ -17,6 +17,13 @@ export default {
     return {
       user: {},
     };
+  },
+  watch: {
+    user() {
+      if (!this.user) {
+        this.$router.push('/');
+      }
+    },
   },
   methods: {
     setUser(user) {

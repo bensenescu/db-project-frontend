@@ -13,8 +13,8 @@
 
 <script>
 // import api from '../services/api';
-import LoginForm from '../components/LoginForm.vue';
-import SignUpForm from '../components/SignUpForm.vue';
+import LoginForm from '../components/forms/LoginForm.vue';
+import SignUpForm from '../components/forms/SignUpForm.vue';
 
 export default {
   name: 'home',

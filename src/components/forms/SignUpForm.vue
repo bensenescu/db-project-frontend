@@ -28,7 +28,7 @@
       <b-form-group v-if="isProfessor" label-for="phone">
         <b-form-input
           id="phone"
-          v-model="user.phone"
+          v-model="user.phoneNo"
           type="text"
           required
           placeholder="Phone Number"/>
@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import api from '../services/api';
+import api from '../../services/api';
 
 export default {
   name: 'login-form',

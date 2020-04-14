@@ -1,21 +1,22 @@
 <template>
-  <b-card class="container" header="Add a label:">
+  <b-card class="container" header="Add a Todo Item:">
     <b-form v-on:submit="onSubmit" v-on:reset="onReset" v-if="show">
       <b-form-group label-for="name" description="Ex. Send an Email">
         <b-form-input
           id="name"
-          v-model="label.labelName"
+          v-model="item.itemName"
           type="text"
           required
           placeholder="Enter Item Name *" />
       </b-form-group>
-      <b-form-group label-for="task" description="Ex. blue or yellow">
+      <b-form-group label-for="task">
         <b-form-input
           id="task"
-          v-model="label.labelColor"
+          v-model="item.task"
           type="text"
-          placeholder="Color" />
+          placeholder="Description of the task" />
       </b-form-group>
+      <b-form-select v-model="item.label" :options="labelOptions"></b-form-select>
       <b-button type="submit" variant="primary">Submit</b-button>
       <b-button type="reset" variant="danger">Reset</b-button>
     </b-form>
@@ -23,12 +24,16 @@
 </template>
 
 <script>
-import api from '../services/api';
+import api from '../../services/api';
 
 export default {
-  name: 'label-form',
+  name: 'todo-form',
   props: {
-    labelProp: {
+    user: {
+      type: Object,
+      required: true,
+    },
+    todoProp: {
       type: Object,
       default() {
         return {};
@@ -37,31 +42,44 @@ export default {
   },
   data() {
     return {
-      label: {},
+      item: {},
+      labelOptions: [],
       show: true,
       error: '',
     };
   },
   watch: {
-    labelProp: {
+    todoProp: {
       immediate: true,
       handler() {
-        this.label = { ...this.labelProp };
+        this.item = { ...this.todoProp };
       },
     },
   },
   computed: {
     editing() {
-      return !!this.labelProp.labelId;
+      return !!this.todoProp.itemId;
     },
+  },
+  async created() {
+    try {
+      const labels = await api.getLabels(this.user.email);
+      this.labelOptions = this.labelOptions.concat(labels)
+        // eslint-disable-next-line arrow-body-style
+        .map((label) => {
+          return { value: label.labelId, text: label.labelName };
+        });
+    } catch (error) {
+      this.error = error;
+    }
   },
   methods: {
     async onSubmit(evt) {
       evt.preventDefault();
 
       try {
-        const res = this.editing ? await api.updateLabel(this.label)
-          : await api.createLabel(this.label);
+        const res = this.editing ? await api.updateTodo(this.item, this.user)
+          : await api.createTodo(this.item, this.user);
 
         if (res.error) {
           this.error = res.error;
@@ -69,19 +87,18 @@ export default {
           alert(`ERROR: ${res.error.sqlMessage}`);
         } else {
           // eslint-disable-next-line no-alert
-          alert(`Your label has successfully been ${this.editing ? 'edited' : 'created'}!`);
+          alert(`Your todo item has successfully been ${this.editing ? 'edited' : 'created'}!`);
         }
-        this.label = {};
+
+        this.$emit('updated');
+        this.item = {};
       } catch (err) {
         this.error = err;
       }
-
-      this.$emit('updated');
-      this.section = {};
     },
     onReset(evt) {
       evt.preventDefault();
-      this.label = {};
+      this.item = {};
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {

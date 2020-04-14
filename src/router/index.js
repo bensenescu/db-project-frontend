@@ -1,14 +1,15 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
-import SectionForm from '../components/SectionForm.vue';
-import CourseForm from '../components/CourseForm.vue';
-import ItemForm from '../components/ItemForm.vue';
+import SectionForm from '../components/forms/SectionForm.vue';
+import CourseForm from '../components/forms/CourseForm.vue';
+import ItemForm from '../components/forms/ItemForm.vue';
 import NotFoundView from '../NotFoundView.vue';
-import TodoForm from '../components/TodoForm.vue';
+import TodoView from '../views/TodoView.vue';
 import AuthView from '../views/AuthView.vue';
 import StudentView from '../views/StudentView.vue';
 import LabelView from '../views/LabelView.vue';
+import EnrollView from '../views/EnrollView.vue';
 
 Vue.use(VueRouter);
 
@@ -44,15 +45,21 @@ const routes = [
     component: ItemForm,
   },
   {
-    path: '/todo-form',
-    name: 'TodoForm',
-    component: TodoForm,
+    path: '/todo',
+    name: 'Todo',
+    component: TodoView,
   },
   {
     path: '/label',
     name: 'Label',
     component: LabelView,
   },
+  {
+    path: '/enroll',
+    name: 'Enroll',
+    component: EnrollView,
+  },
+
   {
     path: '*',
     name: 'NotFound',
