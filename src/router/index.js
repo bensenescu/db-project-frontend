@@ -8,6 +8,7 @@ import NotFoundView from '../NotFoundView.vue';
 import TodoForm from '../components/TodoForm.vue';
 import AuthView from '../views/AuthView.vue';
 import StudentView from '../views/StudentView.vue';
+import LabelView from '../views/LabelView.vue';
 
 Vue.use(VueRouter);
 
@@ -46,6 +47,11 @@ const routes = [
     path: '/todo-form',
     name: 'TodoForm',
     component: TodoForm,
+  },
+  {
+    path: '/label',
+    name: 'Label',
+    component: LabelView,
   },
   {
     path: '*',

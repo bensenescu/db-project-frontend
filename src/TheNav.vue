@@ -12,19 +12,21 @@
         <router-link tag="b-nav-item" to="/item-form">
           Item Form
         </router-link>
+        <router-link tag="b-nav-item" to="/students">
+          Students
+        </router-link>
       </div>
       <div v-else>
         <router-link tag="b-nav-item" to="/todo-form">
           Create Todo Item
         </router-link>
-      </div>
-      <router-link tag="b-nav-item" to="/section-form">
-          Create Section
+        <router-link tag="b-nav-item" to="/label">
+          Labels
         </router-link>
-      <router-link tag="b-nav-item" to="/students">
+        <router-link tag="b-nav-item" to="/students">
           Students
-      </router-link>
-
+        </router-link>
+      </div>
     </b-nav>
   </div>
 </template>

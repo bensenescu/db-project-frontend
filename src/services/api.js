@@ -112,6 +112,42 @@ async function getStudentCalendarItems(studentId) {
   }
 }
 
+async function createLabel(label) {
+  try {
+    const { data } = await axios.post(`${url}/calendar/labels`, label);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getLabels() {
+  try {
+    const { data } = await axios.get(`${url}/calendar/labels`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function deleteLabel(label) {
+  try {
+    const { data } = await axios.delete(`${url}/calendar/labels/${label.labelId}`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function updateLabel(label) {
+  try {
+    const { data } = await axios.put(`${url}/calendar/labels`, label);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
 export default {
   getSections,
   createSection,
@@ -125,4 +161,8 @@ export default {
   updateSection,
   deleteSection,
   getStudentCalendarItems,
+  createLabel,
+  getLabels,
+  updateLabel,
+  deleteLabel,
 };
