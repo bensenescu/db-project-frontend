@@ -1,37 +1,40 @@
 <template>
   <b-list-group>
     <b-list-group-item v-for="section in sections" :key="section.sectionId">
-      <p>Course: {{section.sectionId}}</p>
-      <p>CRN: {{section.courseId}}</p>
-      <p>Meeting Times: {{section.meetingTimes}}</p>
-      <p v-if="section.finalDate">Final Date: {{section.finalDate}}</p>
-      <a :href="section.blackboardUrl">Go to Blackboard</a>
+      <section-ours v-on:update="setSections()" :section="section"/>
     </b-list-group-item>
   </b-list-group>
 </template>
 
 <script>
 import api from '../services/api';
+import SectionOurs from './Section.vue';
 
 export default {
   name: 'sections',
+  components: {
+    SectionOurs,
+  },
+  props: {
+    user: {
+      type: Object,
+      required: true,
+    },
+  },
   data() {
     return {
       sections: [],
     };
   },
   async created() {
-    this.sections = await this.getSections();
+    this.setSections();
   },
   methods: {
-    getSections: async () => {
-      const { data } = await api.getSections();
-      return data;
+    async setSections() {
+      if (this.user.studentId) {
+        this.sections = await api.getStudentCalendarItems(this.user.studentId);
+      }
     },
   },
 };
 </script>
-
-<style lang="less" scoped>
-
-</style>

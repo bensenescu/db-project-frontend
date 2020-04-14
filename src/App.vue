@@ -1,7 +1,7 @@
 <template>
   <div>
     <the-nav v-if="user.email" :isProfessor="user.professorId ? true : false" />
-    <router-view v-on:userSignIn="setUser($event)" :user="user"/>
+    <router-view v-on:userSignIn="setUser($event)" class="main-content" :user="user"/>
   </div>
 </template>
 
@@ -27,4 +27,9 @@ export default {
 };
 </script>
 <style lang="less">
+.main-content {
+  max-width: 60em;
+  margin: auto;
+  padding: 4em;
+}
 </style>

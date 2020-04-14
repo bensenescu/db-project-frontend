@@ -49,6 +49,14 @@ import api from '../services/api';
 
 export default {
   name: 'section-form',
+  props: {
+    sectionProp: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
   data() {
     return {
       section: {},
@@ -56,21 +64,41 @@ export default {
       error: '',
     };
   },
+  watch: {
+    sectionProp: {
+      immediate: true,
+      handler() {
+        this.section = { ...this.sectionProp };
+      },
+    },
+  },
+  computed: {
+    editing() {
+      return !!this.sectionProp.sectionId;
+    },
+  },
   methods: {
     async onSubmit(evt) {
       evt.preventDefault();
       this.section.sectionId = parseInt(this.section.sectionId, 10);
       try {
-        const res = await api.createSection(this.section);
+        const res = this.editing ? await api.updateSection(this.section)
+          : await api.createSection(this.section);
+
         if (res.error) {
           this.error = res.error;
           // eslint-disable-next-line no-alert
           alert(`ERROR: ${res.error.sqlMessage}`);
-        } else {
+        } else if (!this.editing) {
           // eslint-disable-next-line no-alert
           alert('Your section has successfully been created!');
         }
-        this.section = {};
+
+        if (this.editing) {
+          this.$emit('updated');
+        } else {
+          this.section = {};
+        }
       } catch (err) {
         this.error = err;
       }

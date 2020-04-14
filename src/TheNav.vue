@@ -18,6 +18,13 @@
           Create Todo Item
         </router-link>
       </div>
+      <router-link tag="b-nav-item" to="/section-form">
+          Create Section
+        </router-link>
+      <router-link tag="b-nav-item" to="/students">
+          Students
+      </router-link>
+
     </b-nav>
   </div>
 </template>

@@ -4,9 +4,9 @@ const url = 'http://localhost:3000/api';
 
 async function getSections() {
   try {
-    const sections = await axios.get(`${url}/calendar/sections`);
+    const { data } = await axios.get(`${url}/calendar/sections`);
 
-    return sections;
+    return data;
   } catch (err) {
     return err;
   }
@@ -57,6 +57,61 @@ async function getProfessor(email) {
   }
 }
 
+async function getStudents() {
+  try {
+    const { data } = await axios.get(`${url}/calendar/students`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function updateStudent(student) {
+  try {
+    console.log(student);
+    const { data } = await axios.put(`${url}/calendar/students`, student);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function deleteStudent(student) {
+  try {
+    const { data } = await axios.delete(`${url}/calendar/students/${student.email}`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function updateSection(section) {
+  try {
+    const { data } = await axios.put(`${url}/calendar/sections`, section);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function deleteSection(section) {
+  try {
+    const { data } = await axios.delete(`${url}/calendar/sections/${section.sectionId}`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getStudentCalendarItems(studentId) {
+  try {
+    const { data } = await axios.get(`${url}/calendar/students/calendarItems/${studentId}`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
 export default {
   getSections,
   createSection,
@@ -64,4 +119,10 @@ export default {
   getStudent,
   createProfessor,
   getProfessor,
+  getStudents,
+  deleteStudent,
+  updateStudent,
+  updateSection,
+  deleteSection,
+  getStudentCalendarItems,
 };
