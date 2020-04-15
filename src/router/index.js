@@ -3,13 +3,13 @@ import VueRouter from 'vue-router';
 import Home from '../views/Home.vue';
 import SectionForm from '../components/forms/SectionForm.vue';
 import CourseForm from '../components/forms/CourseForm.vue';
-import ItemForm from '../components/forms/ItemForm.vue';
 import NotFoundView from '../NotFoundView.vue';
 import TodoView from '../views/TodoView.vue';
 import AuthView from '../views/AuthView.vue';
 import StudentView from '../views/StudentView.vue';
 import LabelView from '../views/LabelView.vue';
 import EnrollView from '../views/EnrollView.vue';
+import CalendarView from '../views/CalendarView.vue';
 
 Vue.use(VueRouter);
 
@@ -40,9 +40,9 @@ const routes = [
     component: CourseForm,
   },
   {
-    path: '/item-form',
-    name: 'ItemForm',
-    component: ItemForm,
+    path: '/calendar',
+    name: 'calendar',
+    component: CalendarView,
   },
   {
     path: '/todo',

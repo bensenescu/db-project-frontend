@@ -9,7 +9,9 @@
           required
           placeholder="Enter Item Name *" />
       </b-form-group>
-      <b-form-group label-for="task">
+      <b-form-group
+        label-for="task"
+        description="Choose a label or go to the labels tab to make your own!">
         <b-form-input
           id="task"
           v-model="item.task"

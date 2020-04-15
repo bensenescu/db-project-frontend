@@ -1,10 +1,17 @@
 <template>
   <b-card class="container" header="Add a Calendar Item:">
     <b-form v-on:submit="onSubmit" v-on:reset="onReset" v-if="show">
+      <b-form-group label-for="item-type" description="Which section is this for?">
+        <b-form-select
+          id="item-type"
+          v-model="item.sectionId"
+          required
+          :options="sectionOptions"/>
+      </b-form-group>
       <b-form-group label-for="name" description="Ex. Homework 7">
         <b-form-input
           id="name"
-          v-model="item.name"
+          v-model="item.itemName"
           type="text"
           required
           placeholder="Enter Item Name *" />
@@ -16,16 +23,23 @@
           type="text"
           placeholder="Enter Item Description" />
       </b-form-group>
-      <b-form-group label-for="item-type">
+      <b-form-group label-for="item-type" description="Item Type | Ex. Homework">
         <b-form-select
           id="item-type"
-          v-model="item.type"
+          v-model="item.itemType"
           :options="itemOptions"/>
+      </b-form-group>
+      <b-form-group label-for="due-date" description="Due Date">
+        <b-form-datepicker
+          id="due-date"
+          required
+          v-model="item.dueDate"
+          class="mb-2" />
       </b-form-group>
       <b-form-group label-for="assignment-url" description="Optional: Link to the assignment">
         <b-form-input
           id="assigment-url"
-          v-model="item.assignmentUrl"
+          v-model="item.fileUrl"
           type="url"
           placeholder="Assignment Url" />
       </b-form-group>
@@ -40,41 +54,79 @@ import api from '../../services/api';
 
 export default {
   name: 'item-form',
+  props: {
+    user: {
+      type: Object,
+      required: true,
+    },
+    itemProp: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
+  },
   data() {
     return {
       item: {},
       itemOptions: ['Homework', 'Quiz', 'Exam', 'Reading', 'Project', 'Other'],
+      sectionOptions: [],
       show: true,
       error: '',
     };
+  },
+  watch: {
+    itemProp: {
+      immediate: true,
+      handler() {
+        this.item = { ...this.itemProp };
+      },
+    },
+  },
+  computed: {
+    editing() {
+      return !!this.itemProp.itemId;
+    },
+  },
+  async created() {
+    await this.setSectionOptions();
   },
   methods: {
     async onSubmit(evt) {
       evt.preventDefault();
 
+      console.log('submit');
       try {
-        const res = await api.createCourse(this.course);
+        const res = this.editing ? await api.updateCalendarItem(this.item)
+          : await api.createCalendarItem(this.item);
+
         if (res.error) {
           this.error = res.error;
           // eslint-disable-next-line no-alert
           alert(`ERROR: ${res.error.sqlMessage}`);
         } else {
           // eslint-disable-next-line no-alert
-          alert('Your item has successfully been created!');
+          alert(`Your item has successfully been ${this.editing ? 'edited' : 'created'}!`);
         }
-        this.course = {};
+
+        this.$emit('updated');
+        this.item = {};
       } catch (err) {
         this.error = err;
       }
     },
     onReset(evt) {
       evt.preventDefault();
-      this.course = {};
+      this.item = {};
       // Trick to reset/clear native browser form validation state
       this.show = false;
       this.$nextTick(() => {
         this.show = true;
       });
+    },
+    async setSectionOptions() {
+      const sections = await api.getProfessorSections(this.user);
+      this.sectionOptions = sections.map((section) => section.sectionId);
     },
   },
 };

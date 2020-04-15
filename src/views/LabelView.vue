@@ -1,5 +1,7 @@
 <template>
   <div>
+    <h1>Create a label:</h1>
+    <br>
     <label-form :user="user" v-on:updated="setLabels()"/>
     <br>
     <h1>Current Labels</h1>

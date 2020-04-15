@@ -1,5 +1,6 @@
 <template>
   <b-list-group>
+    <h1>Choose Courses to Enroll in </h1>
     <b-list-group-item v-for="section in sections" :key="section.sectionId">
       <p>Course: {{section.sectionId}}</p>
       <p>CRN: {{section.courseId}}</p>
@@ -16,7 +17,7 @@
 import api from '../services/api';
 
 export default {
-  name: 'sections',
+  name: 'enroll-view',
   props: {
     user: {
       type: Object,

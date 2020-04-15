@@ -19,10 +19,13 @@ export default {
     };
   },
   watch: {
-    user() {
-      if (!this.user) {
-        this.$router.push('/');
-      }
+    user: {
+      immediate: true,
+      handler() {
+        if (!this.user.name) {
+          this.$router.push('/');
+        }
+      },
     },
   },
   methods: {

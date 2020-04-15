@@ -1,23 +1,27 @@
 <template>
   <div>
-    <h1>Add todo Items:</h1>
+    <h1>Add items to your sections:</h1>
+    <item-form :user="user" v-on:updated="setItems()"/>
     <br>
-    <todo-form :user="user" v-on:updated="setTodos()"/>
-    <br>
-    <h1>Current Todos</h1>
+    <h1>Current Items</h1>
     <list
       :user="user"
-      :list="todos"
-      :deleteItem="deleteTodo"
+      :list="items"
+      :deleteItem="deleteItem"
       :editState="editing"
       v-on:edit="changeEditState">
       <template v-slot:fields="slotProps">
         <p>Name: {{slotProps.item.itemName}}</p>
-        <p>Task: {{slotProps.item.task}}</p>
-        <p>Label: {{slotProps.item.label}}</p>
+        <p>Section: {{slotProps.item.sectionId}}</p>
+        <p>Description: {{slotProps.item.description}}</p>
+        <p>Type: {{slotProps.item.itemType}}</p>
+        <p>Due Date: {{slotProps.item.dueDate}}</p>
       </template>
       <template v-slot:form="slotProps">
-        <todo-form v-on:updated="setTodos()" :user="user" :todoProp="slotProps.item" />
+        <item-form
+          v-on:updated="setItems()"
+          :itemProp="slotProps.item"
+          :user="user" />
       </template>
     </list>
   </div>
@@ -25,13 +29,13 @@
 
 <script>
 import api from '../services/api';
-import TodoForm from '../components/forms/TodoForm.vue';
+import ItemForm from '../components/forms/ItemForm.vue';
 import List from '../components/helper/list.vue';
 
 export default {
-  name: 'todo-view',
+  name: 'calendar-view',
   components: {
-    TodoForm,
+    ItemForm,
     List,
   },
   props: {
@@ -42,35 +46,34 @@ export default {
   },
   data() {
     return {
-      todos: [],
+      items: [],
       editing: [],
     };
   },
   watch: {
-    todos() {
+    items() {
       this.setEditState();
     },
   },
   async created() {
-    this.setTodos();
+    this.setItems();
     this.setEditState();
   },
   methods: {
-    async setTodos() {
-      this.todos = await api.getStudentTodos(this.user);
+    async setItems() {
+      this.items = await api.getProfessorCalendarItems(this.user);
       this.setEditState();
     },
-    async deleteTodo(todo) {
-      console.log('delete');
+    async deleteItem(item) {
       try {
-        await api.deleteTodo(todo);
+        await api.deleteCalendarItem(item);
       } catch (err) {
         this.error = err;
       }
-      this.setTodos();
+      this.setItems();
     },
     setEditState() {
-      this.editing = [...this.todos.map(() => false)];
+      this.editing = [...this.items.map(() => false)];
     },
     changeEditState(index) {
       this.editing[index] = true;

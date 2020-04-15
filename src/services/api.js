@@ -210,6 +210,98 @@ async function enrollInSection(section, user) {
   }
 }
 
+async function addTeacherToSection(section, user) {
+  try {
+    const param = { section, user };
+    const { data } = await axios.post(`${url}/calendar/professors/teaching`, param);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getProfessorSections(user) {
+  try {
+    const { data } = await axios.get(`${url}/calendar/professors/section/${user.professorId}`);
+    return data.map((item) => ({
+      sectionId: item.sectionId,
+      courseId: item.courseId,
+      blackboardUrl: item.blackboardUrl,
+      meetingTimes: item.meetingTimes,
+    }));
+  } catch (err) {
+    return err;
+  }
+}
+
+async function addItemToSection(sectionId, item) {
+  console.log('addItemToSection');
+  try {
+    const { data } = await axios.post(`${url}/calendar/sections/item`, { sectionId, item });
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function createCalendarItem(item) {
+  try {
+    const { data } = await axios.post(`${url}/calendar/calendarItems`, item);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getProfessorCalendarItems(user) {
+  try {
+    const { data } = await axios.get(`${url}/calendar/professors/calendarItems/${user.professorId}`);
+    // eslint-disable-next-line arrow-body-style
+    return data.map((item) => {
+      return {
+        itemId: item.itemId,
+        sectionId: item.sectionId,
+        itemName: item.itemName,
+        description: item.description,
+        itemType: item.itemType,
+        dueDate: item.dueDate,
+        fileUrl: item.fileUrl,
+      };
+    });
+  } catch (err) {
+    return err;
+  }
+}
+
+async function updateCalendarItem(item) {
+  try {
+    const param = item;
+    delete param.dueDate;
+    const { data } = await axios.put(`${url}/calendar/calendarItems`, param);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function deleteCalendarItem(item) {
+  try {
+    const { data } = await axios.delete(`${url}/calendar/calendarItems/${item.itemId}`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function getStudentSections(studentId) {
+  try {
+    const { data } = await axios.get(`${url}/calendar/students/sections/${studentId}`);
+    return data;
+  } catch (err) {
+    return err;
+  }
+}
+
 export default {
   getSections,
   createSection,
@@ -233,4 +325,12 @@ export default {
   updateTodo,
   getStudentTodos,
   enrollInSection,
+  addTeacherToSection,
+  getProfessorSections,
+  addItemToSection,
+  createCalendarItem,
+  getProfessorCalendarItems,
+  updateCalendarItem,
+  deleteCalendarItem,
+  getStudentSections,
 };

@@ -56,6 +56,10 @@ export default {
         return {};
       },
     },
+    user: {
+      type: Object,
+      rquired: true,
+    },
   },
   data() {
     return {
@@ -83,7 +87,7 @@ export default {
       this.section.sectionId = parseInt(this.section.sectionId, 10);
       try {
         const res = this.editing ? await api.updateSection(this.section)
-          : await api.createSection(this.section);
+          : await this.createSection();
 
         if (res.error) {
           this.error = res.error;
@@ -94,11 +98,8 @@ export default {
           alert('Your section has successfully been created!');
         }
 
-        if (this.editing) {
-          this.$emit('updated');
-        } else {
-          this.section = {};
-        }
+        this.$emit('updated');
+        this.section = {};
       } catch (err) {
         this.error = err;
       }
@@ -111,6 +112,11 @@ export default {
       this.$nextTick(() => {
         this.show = true;
       });
+    },
+    async createSection() {
+      const res = await api.createSection(this.section);
+      await api.addTeacherToSection(this.section, this.user);
+      return res;
     },
   },
 };
